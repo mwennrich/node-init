@@ -48,7 +48,7 @@ func init() {
 
 func initNetwork(_ []string) error {
 
-	klog.Infoln("Starting node-init")
+	klog.Infoln("starting node-init")
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		panic(err.Error())
@@ -81,13 +81,14 @@ func initNetwork(_ []string) error {
 	for {
 		select {
 		case <-stop.Done():
+			klog.Infof("shutting down")
 			return nil
 		case <-ticker.C:
-			klog.Infof("start reconciliation")
 			err := r.reconcile()
 			if err != nil {
 				klog.Fatal("error during reconciliation, dying: %v", err)
 			}
+			klog.Infof("sleeping for %s", reconcileInterval.String())
 		}
 	}
 }

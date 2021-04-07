@@ -78,6 +78,8 @@ func initNetwork(_ []string) error {
 	}
 
 	ticker := time.NewTicker(reconcileInterval)
+	klog.Infof("waiting %s for next reconciliation", reconcileInterval.String())
+
 	for {
 		select {
 		case <-stop.Done():
@@ -88,7 +90,7 @@ func initNetwork(_ []string) error {
 			if err != nil {
 				klog.Fatal("error during reconciliation, dying: %v", err)
 			}
-			klog.Infof("sleeping for %s", reconcileInterval.String())
+			klog.Infof("waiting %s for next reconciliation", reconcileInterval.String())
 		}
 	}
 }

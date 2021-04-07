@@ -78,7 +78,10 @@ func initNetwork(args []string) error {
 	}
 	// add route
 	route := netlink.Route{LinkIndex: link.Attrs().Index, Scope: netlink.SCOPE_LINK, Dst: podCidr}
-	netlink.RouteAdd(&route)
+	err = netlink.RouteAdd(&route)
+	if err != nil {
+		return err
+	}
 	klog.Infof("route for %s successfully added", podCidrString)
 	return nil
 }

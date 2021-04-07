@@ -35,7 +35,7 @@ func init() {
 	}
 }
 
-func initNetwork(args []string) error {
+func initNetwork(_ []string) error {
 
 	klog.Infoln("Starting node-init")
 	config, err := rest.InClusterConfig()

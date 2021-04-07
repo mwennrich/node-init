@@ -88,7 +88,7 @@ spec:
             memory: 1Mi
       initContainers:
       - name: node-init
-        image: mwennrich/node-init:latest
+        image: metal-stack/node-init:latest
         env:
         - name: KUBE_NODE_NAME
           valueFrom:

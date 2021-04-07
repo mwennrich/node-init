@@ -1,4 +1,4 @@
-module github.com/mwennrich/node-init
+module github.com/metal-stack/node-init
 
 go 1.15
 

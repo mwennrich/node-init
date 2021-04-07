@@ -10,11 +10,11 @@ node-init:
 
 .PHONY: dockerimages
 dockerimages:
-	docker build -t mwennrich/node-init:${DOCKER_TAG} .
+	docker build -t metal-stack/node-init:${DOCKER_TAG} .
 
 .PHONY: dockerpush
 dockerpush:
-	docker push mwennrich/node-init:${DOCKER_TAG}
+	docker push metal-stack/node-init:${DOCKER_TAG}
 
 .PHONY: clean
 clean:

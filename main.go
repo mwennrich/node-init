@@ -4,7 +4,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/mwennrich/node-init/cmd"
+	"github.com/metal-stack/node-init/cmd"
 )
 
 func main() {

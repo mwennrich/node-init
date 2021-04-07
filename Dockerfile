@@ -5,7 +5,6 @@ COPY / /work
 WORKDIR /work
 RUN make
 
-FROM alpine:3.13
+FROM scratch
 COPY --from=builder /work/bin/node-init /node-init
-USER root
 ENTRYPOINT ["/node-init","init"]

@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"time"
 
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
 
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -18,6 +20,10 @@ import (
 	netlink "github.com/vishvananda/netlink"
 )
 
+const (
+	reconcileInterval = 2 * time.Minute
+)
+
 var (
 	initNode = &cobra.Command{
 		Use:   "init",
@@ -27,6 +33,11 @@ var (
 		},
 	}
 )
+
+type reconciler struct {
+	c        kubernetes.Interface
+	nodeName string
+}
 
 func init() {
 	err := viper.BindPFlags(initNode.Flags())
@@ -54,7 +65,39 @@ func initNetwork(_ []string) error {
 		return fmt.Errorf("node env is missing")
 	}
 
-	node, err := c.CoreV1().Nodes().Get(context.Background(), nodeName, v1.GetOptions{})
+	r := reconciler{
+		c:        c,
+		nodeName: nodeName,
+	}
+
+	stop := signals.SetupSignalHandler()
+
+	err = r.reconcile()
+	if err != nil {
+		klog.Fatal("error during reconciliation, dying: %v", err)
+	}
+
+	ticker := time.NewTicker(reconcileInterval)
+	go func() {
+		for {
+			select {
+			case <-stop.Done():
+				return
+			case <-ticker.C:
+				klog.Infof("start reconciliation")
+				err := r.reconcile()
+				if err != nil {
+					klog.Fatal("error during reconciliation, dying: %v", err)
+				}
+			}
+		}
+	}()
+
+	return nil
+}
+
+func (r *reconciler) reconcile() error {
+	node, err := r.c.CoreV1().Nodes().Get(context.Background(), r.nodeName, v1.GetOptions{})
 	if err != nil {
 		return err
 	}

@@ -32,5 +32,6 @@ require (
 	k8s.io/client-go v0.20.5
 	k8s.io/klog/v2 v2.8.0
 	k8s.io/utils v0.0.0-20210305010621-2afb4311ab10 // indirect
+	sigs.k8s.io/controller-runtime v0.8.3
 	sigs.k8s.io/structured-merge-diff/v4 v4.1.1 // indirect
 )

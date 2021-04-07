@@ -5,7 +5,7 @@ all: node-init
 
 .PHONY: node-init
 node-init:
-	go build -o bin/node-init
+	CGO_ENABLED=0 go build -o bin/node-init -ldflags '-extldflags "-static"'
 	strip bin/node-init
 
 .PHONY: dockerimages

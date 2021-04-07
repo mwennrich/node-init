@@ -78,22 +78,18 @@ func initNetwork(_ []string) error {
 	}
 
 	ticker := time.NewTicker(reconcileInterval)
-	go func() {
-		for {
-			select {
-			case <-stop.Done():
-				return
-			case <-ticker.C:
-				klog.Infof("start reconciliation")
-				err := r.reconcile()
-				if err != nil {
-					klog.Fatal("error during reconciliation, dying: %v", err)
-				}
+	for {
+		select {
+		case <-stop.Done():
+			return nil
+		case <-ticker.C:
+			klog.Infof("start reconciliation")
+			err := r.reconcile()
+			if err != nil {
+				klog.Fatal("error during reconciliation, dying: %v", err)
 			}
 		}
-	}()
-
-	return nil
+	}
 }
 
 func (r *reconciler) reconcile() error {

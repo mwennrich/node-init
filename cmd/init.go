@@ -29,10 +29,13 @@ var (
 )
 
 func init() {
-	viper.BindPFlags(initNode.Flags())
+	err := viper.BindPFlags(initNode.Flags())
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
-func initNetwork(args []string) error {
+func initNetwork(_ []string) error {
 
 	klog.Infoln("Starting node-init")
 	config, err := rest.InClusterConfig()

@@ -17,7 +17,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	netlink "github.com/vishvananda/netlink"
+	"github.com/vishvananda/netlink"
 )
 
 const (

@@ -17,7 +17,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	netlink "github.com/vishvananda/netlink"
+	"github.com/vishvananda/netlink"
 )
 
 const (
@@ -51,13 +51,13 @@ func initNetwork(_ []string) error {
 	klog.Infoln("starting node-init")
 	config, err := rest.InClusterConfig()
 	if err != nil {
-		panic(err.Error())
+		klog.Fatalln(err.Error())
 	}
 
 	// create the clientset
 	c, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		panic(err.Error())
+		klog.Fatalln(err.Error())
 	}
 
 	nodeName := os.Getenv("KUBE_NODE_NAME")

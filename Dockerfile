@@ -5,6 +5,7 @@ COPY / /work
 WORKDIR /work
 RUN make
 
-FROM scratch
+FROM alpine:3.16
+RUN apk add ethtool
 COPY --from=builder /work/bin/node-init /node-init
 ENTRYPOINT ["/node-init","init"]

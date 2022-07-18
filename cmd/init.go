@@ -128,5 +128,12 @@ func (r *reconciler) reconcile() error {
 		return err
 	}
 	klog.Infof("route for %s successfully added", podCidrString)
+
+	// check for invalid bgp sessions
+	err = repairFailedBGPSession()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

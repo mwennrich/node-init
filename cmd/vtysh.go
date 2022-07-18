@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"os/exec"
+	"strings"
 
 	"k8s.io/klog/v2"
 )
@@ -44,7 +45,7 @@ type (
 )
 
 func repairFailedBGPSession() error {
-	failedInterfaces, err := checkBGPSessions()
+	failedInterfaces, err := checkBGPSessions("lan")
 	if err != nil {
 		return err
 	}
@@ -60,7 +61,7 @@ func repairFailedBGPSession() error {
 	return nil
 }
 
-func checkBGPSessions() ([]string, error) {
+func checkBGPSessions(interfaceFilter string) ([]string, error) {
 	socketPath, err := lookupSocketPath("bgpd")
 	if err != nil {
 		return nil, err
@@ -82,8 +83,11 @@ func checkBGPSessions() ([]string, error) {
 
 	failedInterfaces := []string{}
 	for name, peer := range bgpSummary.Ipv4Unicast.Peers {
-		// FIXME check with real failing interface bgp session output
-		if peer.State != "Established" {
+		if !strings.HasPrefix(name, interfaceFilter) {
+			continue
+		}
+		// see https://github.com/FRRouting/frr/blob/stable/8.2/bgpd/bgp_debug.c#L102
+		if peer.State == "Idle" {
 			failedInterfaces = append(failedInterfaces, name)
 		}
 	}

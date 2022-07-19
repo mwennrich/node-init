@@ -87,7 +87,8 @@ func checkBGPSessions(interfaceFilter string) ([]string, error) {
 			continue
 		}
 		// see https://github.com/FRRouting/frr/blob/stable/8.2/bgpd/bgp_debug.c#L102
-		if peer.State == "Idle" {
+		state := strings.ToLower(peer.State)
+		if state == "idle" || state == "waiting" {
 			failedInterfaces = append(failedInterfaces, name)
 		}
 	}
@@ -145,10 +146,10 @@ func runCmd(socketPath string, cmd string) ([]byte, error) {
 func ethtool(iface string) error {
 	for _, onoff := range []string{"on", "off"} {
 		c := fmt.Sprintf("ethtool --pause %s rx %s", iface, onoff)
-		cmd := exec.Command("bash", "-c", c)
-		_, err := cmd.CombinedOutput()
+		cmd := exec.Command(c)
+		out, err := cmd.CombinedOutput()
 		if err != nil {
-			return fmt.Errorf("error executing %q error:%w", c, err)
+			return fmt.Errorf("error executing %q output:%q error:%w", c, string(out), err)
 		}
 	}
 	return nil

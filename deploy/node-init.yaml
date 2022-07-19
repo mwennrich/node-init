@@ -97,4 +97,11 @@ spec:
               fieldPath: spec.nodeName
         securityContext:
           privileged: true
+        volumeMounts:
+        - mountPath: /var/run/frr
+          name: frrsockets
       hostNetwork: true
+      volumes:
+      - name: frrsockets
+        hostPath:
+          path: /var/run/frr

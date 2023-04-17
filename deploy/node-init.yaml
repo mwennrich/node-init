@@ -79,7 +79,7 @@ spec:
       serviceAccountName: node-init
       containers:
       - name: node-init-pause
-        image: k8s.gcr.io/pause:3.3
+        image: registry.k8s.io/pause:3.9
         securityContext:
           privileged: true
         resources:

@@ -1,12 +1,10 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -27,8 +25,7 @@ func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
 		if viper.GetBool("debug") {
-			st := errors.WithStack(err)
-			fmt.Printf("%+v", st)
+			panic(err)
 		}
 		os.Exit(1)
 	}

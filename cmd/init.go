@@ -74,7 +74,7 @@ func initNetwork(_ []string) error {
 
 	err = r.reconcile()
 	if err != nil {
-		klog.Fatal("error during reconciliation, dying: %v", err)
+		klog.Fatalf("error during reconciliation, dying: %v", err)
 	}
 
 	ticker := time.NewTicker(reconcileInterval)

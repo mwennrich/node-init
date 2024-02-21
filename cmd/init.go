@@ -88,7 +88,7 @@ func initNetwork(_ []string) error {
 		case <-ticker.C:
 			err := r.reconcile()
 			if err != nil {
-				klog.Fatal("error during reconciliation, dying: %v", err)
+				klog.Fatalf("error during reconciliation, dying: %v", err)
 			}
 			klog.Infof("waiting %s for next reconciliation", reconcileInterval.String())
 		}

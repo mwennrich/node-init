@@ -4,25 +4,6 @@ metadata:
   name: node-init
   namespace: kube-system
 ---
-apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
-metadata:
-  name: node-init
-spec:
-  allowPrivilegeEscalation: true
-  privileged: true
-  fsGroup:
-    rule: RunAsAny
-  runAsUser:
-    rule: RunAsAny
-  seLinux:
-    rule: RunAsAny
-  supplementalGroups:
-    rule: RunAsAny
-  volumes:
-  - secret
-  hostNetwork: true
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -36,14 +17,6 @@ rules:
   - watch
   - list
   - get
-- apiGroups:
-  - extensions
-  resources:
-  - podsecuritypolicies
-  resourceNames:
-  - node-init
-  verbs:
-  - use
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -75,20 +48,10 @@ spec:
       labels:
         app: node-init
     spec:
-      serviceAccount: node-init
       serviceAccountName: node-init
       containers:
-      - name: node-init-pause
-        image: registry.k8s.io/pause:3.9
-        securityContext:
-          privileged: true
-        resources:
-          requests:
-            cpu: 0m
-            memory: 1Mi
-      initContainers:
       - name: node-init
-        image: metal-stack/node-init:latest
+        image: ghcr.io/metal-stack/node-init:latest
         env:
         - name: KUBE_NODE_NAME
           valueFrom:
@@ -96,5 +59,11 @@ spec:
               apiVersion: v1
               fieldPath: spec.nodeName
         securityContext:
-          privileged: true
+          capabilities:
+            add:
+              - NET_ADMIN
       hostNetwork: true
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
